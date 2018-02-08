@@ -8,6 +8,31 @@ import (
 // Hash is a hash
 type Hash []byte
 
+// HashPrefix is prefix to the hash being done
+type HashPrefix []byte
+
+// HashPrefix types
+var (
+	PrefixLeaf HashPrefix = []byte{0}
+	PrefixNode HashPrefix = []byte{1}
+)
+
+// Concatenate will join and hash two hashes
+func CreateLeafHash(data []byte) Hash {
+	// Concat prefix and hashes
+	concat := bytes.Join([][]byte{PrefixLeaf, data}, []byte{})
+
+	return hasher.Hash(concat)
+}
+
+// CreateNodeHash will join and hash two hashes
+func CreateNodeHash(left Hash, right Hash) Hash {
+	// Concat prefix and hashes
+	concat := bytes.Join([][]byte{PrefixNode, left, right}, []byte{})
+
+	return hasher.Hash(concat)
+}
+
 // Hasher interface
 type Hasher interface {
 	Hash(data []byte) Hash
@@ -20,12 +45,4 @@ type Sha256Hasher struct{}
 func (h *Sha256Hasher) Hash(data []byte) Hash {
 	hash := sha256.Sum256(data)
 	return Hash(hash[:])
-}
-
-// Concatenate will join and hash two hashes
-func (h Hash) Concatenate(other Hash) Hash {
-
-	concat := bytes.Join([][]byte{[]byte(h), []byte(other)}, []byte{})
-
-	return hasher.Hash(concat)
 }

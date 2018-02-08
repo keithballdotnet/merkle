@@ -1,8 +1,15 @@
 package merkle
 
-import "testing"
+import (
+	"context"
+	"fmt"
+	"testing"
+)
 
 func TestTree(t *testing.T) {
+
+	ctx := context.TODO()
+
 	tree := NewTree(&Sha256Hasher{})
 	if tree == nil {
 		t.Fail()
@@ -16,13 +23,11 @@ func TestTree(t *testing.T) {
 		[]byte("same"),
 	}
 
-	// Now create leafs and add them to tree
-	var hashes []Hash
-	for _, things := range things {
-		thingHash := hasher.Hash(things)
-		hashes = append(hashes, thingHash)
-	}
+	tree.AddContent(ctx, things)
 
-	tree.AddHashes(hashes)
+	fmt.Printf("Tree: %s\n", tree.ToString())
 
+	tree.Build()
+
+	fmt.Printf("Tree: %s\n", tree.ToString())
 }

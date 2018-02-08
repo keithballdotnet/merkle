@@ -5,8 +5,8 @@ type NodeType int
 
 // Some NodeType constants
 const (
-	NodeTypeNone NodeType = 0
-	NodeTypeLeaf NodeType = 1
+	NodeTypeInternal NodeType = 0
+	NodeTypeLeaf     NodeType = 1
 )
 
 // Node is an element in the merkle tree
