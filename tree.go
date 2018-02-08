@@ -59,7 +59,7 @@ func (t *Tree) Build() {
 func buildLayer(layer []*Node) []*Node {
 	var newLayer []*Node
 
-	// Seperate any odd node off from the collection
+	// Separate any odd node off from the collection
 	odd := &Node{}
 	if len(layer)%2 == 1 {
 		odd = layer[len(layer)-1]

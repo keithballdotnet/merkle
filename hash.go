@@ -17,7 +17,7 @@ var (
 	PrefixNode HashPrefix = []byte{1}
 )
 
-// Concatenate will join and hash two hashes
+// CreateLeafHash will hash data for a leaf
 func CreateLeafHash(data []byte) Hash {
 	// Concat prefix and hashes
 	concat := bytes.Join([][]byte{PrefixLeaf, data}, []byte{})

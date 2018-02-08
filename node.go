@@ -18,7 +18,7 @@ type Node struct {
 	Parent *Node
 }
 
-// IsLeaf retuns true if this node is a leaf
+// IsLeaf returns true if this node is a leaf
 func (n *Node) IsLeaf() bool {
 	return (n.Left == nil && n.Right == nil)
 }
