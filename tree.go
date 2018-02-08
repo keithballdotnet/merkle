@@ -36,7 +36,7 @@ func (t *Tree) AddContent(ctx context.Context, data [][]byte) {
 }
 
 // Build the merkle tree once we have added content
-func (t *Tree) Build() {
+func (t *Tree) Build(ctx context.Context) {
 
 	// Anything to do?
 	// TODO:  Return an error?
@@ -47,7 +47,7 @@ func (t *Tree) Build() {
 	// Build the layers of the tree
 	layer := t.Leaves[:]
 	for len(layer) != 1 {
-		layer = buildLayer(layer)
+		layer = buildLayer(ctx, layer)
 	}
 
 	// Get tree root information
@@ -56,7 +56,7 @@ func (t *Tree) Build() {
 }
 
 // Buld a layer of the tree
-func buildLayer(layer []*Node) []*Node {
+func buildLayer(ctx context.Context, layer []*Node) []*Node {
 	var newLayer []*Node
 
 	// Separate any odd node off from the collection
