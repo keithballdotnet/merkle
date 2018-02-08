@@ -56,40 +56,55 @@ func (t *Tree) Build() {
 }
 
 // Buld a layer of the tree
-func buildLayer(layer []*Node) (newLayer []*Node) {
-	// Any odd node?
-	odd := &Node{}
+func buildLayer(layer []*Node) []*Node {
+	var newLayer []*Node
 
-	// Lets see
+	// Seperate any odd node off from the collection
+	odd := &Node{}
 	if len(layer)%2 == 1 {
 		odd = layer[len(layer)-1]
 		layer = layer[:len(layer)-1]
 	}
 
+	// Loop through the layer
 	for i := 0; i <= len(layer)-1; i += 2 {
 		nodeHash := CreateNodeHash(layer[i].Hash, layer[i+1].Hash)
 		newnode := Node{
 			Type: NodeTypeInternal,
 			Hash: nodeHash,
 		}
-		newnode.Left, newnode.Right = layer[i], layer[i+1]
-		//layer[i].Left, layer[i+1].Left = true, false
-		layer[i].Parent, layer[i+1].Parent = &newnode, &newnode
+
+		// Set up the nodes relationships
+		newnode.Left = layer[i]
+		newnode.Right = layer[i+1]
+		layer[i].Parent = &newnode
+		layer[i+1].Parent = &newnode
+
+		// Add to the new layer
 		newLayer = append(newLayer, &newnode)
 	}
 
-	//  Push node up
+	// The odd nodes will be pushed upwards
 	if odd.Hash != nil {
 		newLayer = append(newLayer, odd)
 	}
-	return
+
+	return newLayer
 }
 
 // ToString will create a string representation of the tree
 func (t *Tree) ToString() string {
-	str := fmt.Sprintf("root: %s\n", base64.StdEncoding.EncodeToString(t.RootHash))
+	str := fmt.Sprintf("\nroot: %s\n", base64.StdEncoding.EncodeToString(t.RootHash))
 	for _, l := range t.Leaves {
 		str = str + fmt.Sprintf("leaf: %s\n", base64.StdEncoding.EncodeToString(l.Hash))
+		parent := l.Parent
+		indent := "  "
+		for parent != nil {
+			str = str + fmt.Sprintf("%sParent: %s\n", indent, base64.StdEncoding.EncodeToString(parent.Hash))
+			parent = parent.Parent
+			indent += indent
+		}
 	}
+
 	return str
 }
