@@ -7,6 +7,8 @@
 # merkle
 A Merkle Tree playground
 
+This tree uses THEX (http://adc.sourceforge.net/draft-jchapweske-thex-02.html) as a basis.  Promoting odd nodes.  Also prepending bits depending on nodes being either nodes or leaves.
+
 ## Further Reading
 
 https://en.wikipedia.org/wiki/Merkle_tree
