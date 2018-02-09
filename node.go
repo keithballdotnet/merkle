@@ -13,6 +13,7 @@ const (
 type Node struct {
 	Type   NodeType
 	Hash   Hash
+	IsLeft bool
 	Left   *Node
 	Right  *Node
 	Parent *Node
@@ -20,5 +21,5 @@ type Node struct {
 
 // IsLeaf returns true if this node is a leaf
 func (n *Node) IsLeaf() bool {
-	return (n.Left == nil && n.Right == nil)
+	return n.Type == NodeTypeLeaf
 }

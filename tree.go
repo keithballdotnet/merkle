@@ -13,7 +13,8 @@ type Tree struct {
 	RootHash Hash
 	Root     *Node
 	Leaves   []*Node
-	Height   int
+	Layers   [][]*Node
+	Depth    int
 }
 
 // NewTree will create a new Merkle tree
@@ -47,21 +48,25 @@ func (t *Tree) Build(ctx context.Context) {
 
 	// Build the layers of the tree
 	layer := t.Leaves[:]
-	height := 0
+	depth := 1
+	layers := [][]*Node{}
+	layers = append(layers, layer)
 	for len(layer) != 1 {
-		layer = buildLayer(ctx, layer, &height)
+		layer = buildLayer(ctx, layer)
+		layers = append(layers, layer)
+		depth++
 	}
 
-	// Get tree root information
-	t.Height = height
+	// Set tree
+	t.Depth = depth
 	t.Root = layer[0]
+	t.Layers = layers
 	t.RootHash = t.Root.Hash
 }
 
 // Buld a layer of the tree
-func buildLayer(ctx context.Context, layer []*Node, height *int) []*Node {
+func buildLayer(ctx context.Context, layer []*Node) []*Node {
 	var newLayer []*Node
-	*height++
 
 	// Separate any odd node off from the collection
 	odd := &Node{}
@@ -81,6 +86,7 @@ func buildLayer(ctx context.Context, layer []*Node, height *int) []*Node {
 		// Set up the nodes relationships
 		newnode.Left = layer[i]
 		newnode.Right = layer[i+1]
+		layer[i].IsLeft = true
 		layer[i].Parent = &newnode
 		layer[i+1].Parent = &newnode
 
@@ -96,18 +102,58 @@ func buildLayer(ctx context.Context, layer []*Node, height *int) []*Node {
 	return newLayer
 }
 
+// // Verify data will indicate if data is present in the tree and also recalulate that the data
+// func (t *Tree) VerifyData(expectedRoot Hash, data []byte) bool {
+// 	expectedHash := CreateLeafHash(data)
+// 	for _, leaf := range t.Leaves {
+// 		// Found data in leaves
+// 		if bytes.Equal(expectedHash, leaf.Hash) {
+
+// 		}
+
+// 	}
+// 	return false
+// }
+
+// // BuildLayers will build the layers into a navigationable array
+// func (t *Tree) BuildLayers(ctx context.Context) [][]*Node {
+
+// 	layers := make([][]*Node, t.Depth+1)
+
+// 	for _, l := range t.Leaves {
+// 		layers[0] = t.Leaves
+// 		parent := l.Parent
+// 		layerDepth := 1
+// 		for parent != nil {
+// 			// Only add left parents
+// 			if parent.IsLeft {
+// 				layers[layerDepth] = append(layers[layerDepth], parent)
+// 			}
+// 			parent = parent.Parent
+// 			layerDepth++
+// 		}
+// 	}
+// 	// Add root to last layer
+// 	layers[t.Depth] = []*Node{t.Root}
+
+// 	fmt.Printf("Depth: %v\n", t.Depth)
+// 	fmt.Printf("Leaves: %v\n", len(t.Leaves))
+// 	for i := 0; i < t.Depth; i++ {
+// 		fmt.Printf("Depth: %v - %v\n", i, len(layers[i]))
+// 	}
+
+// 	return layers
+// }
+
 // ToString will create a string representation of the tree
-func (t *Tree) ToString() string {
-	str := fmt.Sprintf("\nroot: %s height: %v\n", base64.StdEncoding.EncodeToString(t.RootHash), t.Height)
-	for _, l := range t.Leaves {
-		str = str + fmt.Sprintf("leaf: %s\n", base64.StdEncoding.EncodeToString(l.Hash))
-		parent := l.Parent
-		indent := "  "
-		for parent != nil {
-			str = str + fmt.Sprintf("%sParent: %s\n", indent, base64.StdEncoding.EncodeToString(parent.Hash))
-			parent = parent.Parent
-			indent += indent
+func (t *Tree) ToString(ctx context.Context) string {
+	str := fmt.Sprintf("\nroot: %s depth: %v\n", base64.StdEncoding.EncodeToString(t.RootHash), t.Depth)
+	for i := 0; i < t.Depth; i++ {
+		str += fmt.Sprintf("Depth: %v", i)
+		for _, l := range t.Layers[i] {
+			str = str + fmt.Sprintf(" - Node: %s Type: %v", base64.StdEncoding.EncodeToString(l.Hash), l.Type)
 		}
+		str += "\n"
 	}
 
 	return str
