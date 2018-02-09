@@ -38,7 +38,7 @@ func (t *Tree) GetRootHash() Hash {
 	return t.Layers[0][0].Hash
 }
 
-// AddContent will add data to the tree
+// AddContent will add data to the tree (replaces all leaves)
 func (t *Tree) AddContent(ctx context.Context, data [][]byte) {
 	// Now create leafs and add them to tree
 	var leaves []*Node
@@ -50,6 +50,7 @@ func (t *Tree) AddContent(ctx context.Context, data [][]byte) {
 		})
 	}
 	t.Leaves = leaves
+	t.Layers = nil
 }
 
 // Build the merkle tree once we have added content
@@ -139,7 +140,7 @@ func (t *Tree) ToString(ctx context.Context) string {
 	for i := 0; i < t.Depth; i++ {
 		str += fmt.Sprintf("Depth: %v", i)
 		for _, l := range t.Layers[i] {
-			str = str + fmt.Sprintf(" - Node: %s Type: %v", base64.StdEncoding.EncodeToString(l.Hash), l.Type)
+			str = str + fmt.Sprintf(" - H: %s T: %v L: %v", base64.StdEncoding.EncodeToString(l.Hash), l.Type, l.IsLeft)
 		}
 		str += "\n"
 	}

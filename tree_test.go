@@ -15,34 +15,31 @@ func TestTree(t *testing.T) {
 	testHasher := &Sha256Hasher{}
 
 	t.Run("ExpectedHashes", func(t *testing.T) {
-		// Create somethings
-		one := [][]byte{
-			[]byte("one"),
-		}
-		oneH, err := base64.StdEncoding.DecodeString("0Nc2CrefWKseHj/mStd+LqC8B+NrX0btIiPt2SmN+ek=")
+		one := getTestData(1)
+		oneH, err := base64.StdEncoding.DecodeString("lqKW0iTyhcZ77pPDD4owkVfw2qNdxbh+QQt4YwoJz8c=")
 		if err != nil {
 			t.Errorf("Error: %v", err)
 		}
-		two := [][]byte{
-			[]byte("one"),
-			[]byte("two"),
-		}
-		twoH, err := base64.StdEncoding.DecodeString("T1X2GdkhUjV3iyufF9b0kVsWFxIU0VI4EpNml2Teci4=")
+		two := getTestData(2)
+		twoH, err := base64.StdEncoding.DecodeString("ogv5p8wtyKCPX0FacbGfasQnurVNJO7IaLXTEDRJlTo=")
 		if err != nil {
 			t.Errorf("Error: %v", err)
 		}
-		// Create somethings
-		five := [][]byte{
-			[]byte("one"),
-			[]byte("two"),
-			[]byte("three"),
-			[]byte("four"),
-			[]byte("five"),
-		}
-		fiveH, err := base64.StdEncoding.DecodeString("gy5gl3aksFyiCO95a/1vLXz88A3dRq+0l9Sxte8ZqZQ=")
+		five := getTestData(5)
+		fiveH, err := base64.StdEncoding.DecodeString("uFW0LWww9bCH4FJmeD+9bjlPe5JgE8yqZ3AKiwxaWW8=")
 		if err != nil {
 			t.Errorf("Error: %v", err)
 		}
+		eight := getTestData(8)
+		eightH, err := base64.StdEncoding.DecodeString("739JtiD2x+qbljohTaNLUCHG3tjtV3NDgKMRq3JqqQc=")
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+		// twoHundred := getTestData(200)
+		// twoHundredH, err := base64.StdEncoding.DecodeString("4vB6nPZQJrooLLKG1nO1ZHh6ZHhVda0aqnRGjaAtYWE=")
+		// if err != nil {
+		// 	t.Errorf("Error: %v", err)
+		// }
 
 		type args struct {
 			ctx  context.Context
@@ -56,6 +53,8 @@ func TestTree(t *testing.T) {
 			{"one", args{ctx, one}, Hash(oneH)},
 			{"two", args{ctx, two}, Hash(twoH)},
 			{"five", args{ctx, five}, Hash(fiveH)},
+			{"eight", args{ctx, eight}, Hash(eightH)},
+			//{"twoHundred", args{ctx, twoHundred}, Hash(twoHundredH)},
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
@@ -87,4 +86,12 @@ func getTestTree(ctx context.Context, hasher Hasher, data [][]byte) *Tree {
 	tree.Build(ctx)
 
 	return tree
+}
+
+func getTestData(len int) [][]byte {
+	testData := make([][]byte, len)
+	for i := 0; i < len; i++ {
+		testData[i] = []byte{byte(i)}
+	}
+	return testData
 }
