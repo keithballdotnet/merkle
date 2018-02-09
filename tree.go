@@ -121,6 +121,12 @@ func buildLayer(ctx context.Context, layer []*Node) []*Node {
 	return newLayer
 }
 
+// GetProof will return a collection of hashes that can be used to prove some data is in the tree
+func (t *Tree) GetProof(ctx context.Context, leafIndex int) *Proof {
+
+	return nil
+}
+
 // // Verify data will indicate if data is present in the tree and also recalulate that the data
 // func (t *Tree) VerifyData(expectedRoot Hash, data []byte) bool {
 // 	expectedHash := CreateLeafHash(data)
