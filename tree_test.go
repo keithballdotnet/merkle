@@ -65,8 +65,8 @@ func TestTree(t *testing.T) {
 					t.Error("Unable to create tree")
 				}
 				fmt.Printf("tree: %s\n", tree.ToString(tt.args.ctx))
-				if !bytes.Equal(tree.RootHash, tt.want) {
-					t.Errorf("Incorrect hash = %v, want %v", tree.RootHash, tt.want)
+				if !bytes.Equal(tree.GetRootHash(), tt.want) {
+					t.Errorf("Incorrect hash = %v, want %v", tree.GetRootHash(), tt.want)
 				}
 
 			})

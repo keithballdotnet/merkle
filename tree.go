@@ -10,17 +10,32 @@ var hasher Hasher
 
 // Tree ...
 type Tree struct {
-	RootHash Hash
-	Root     *Node
-	Leaves   []*Node
-	Layers   [][]*Node
-	Depth    int
+	Leaves []*Node
+	// Layers is populated after build
+	Layers [][]*Node
+	Depth  int
 }
 
 // NewTree will create a new Merkle tree
 func NewTree(h Hasher) *Tree {
 	hasher = h
 	return &Tree{}
+}
+
+// GetRoot will return the root node
+func (t *Tree) GetRoot() *Node {
+	if len(t.Layers) == 0 {
+		return nil
+	}
+	return t.Layers[0][0]
+}
+
+// GetRootHash will return the root hash
+func (t *Tree) GetRootHash() Hash {
+	if len(t.Layers) == 0 {
+		return nil
+	}
+	return t.Layers[0][0].Hash
 }
 
 // AddContent will add data to the tree
@@ -64,9 +79,7 @@ func (t *Tree) Build(ctx context.Context) {
 
 	// Set tree
 	t.Depth = depth
-	t.Root = layer[0]
 	t.Layers = layers
-	t.RootHash = t.Root.Hash
 }
 
 // Buld a layer of the tree
@@ -122,7 +135,7 @@ func buildLayer(ctx context.Context, layer []*Node) []*Node {
 
 // ToString will create a string representation of the tree
 func (t *Tree) ToString(ctx context.Context) string {
-	str := fmt.Sprintf("\nroot: %s depth: %v\n", base64.StdEncoding.EncodeToString(t.RootHash), t.Depth)
+	str := fmt.Sprintf("\nroot: %s depth: %v\n", base64.StdEncoding.EncodeToString(t.GetRootHash()), t.Depth)
 	for i := 0; i < t.Depth; i++ {
 		str += fmt.Sprintf("Depth: %v", i)
 		for _, l := range t.Layers[i] {
