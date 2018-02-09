@@ -1,6 +1,7 @@
 package merkle
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"fmt"
@@ -123,22 +124,52 @@ func buildLayer(ctx context.Context, layer []*Node) []*Node {
 
 // GetProof will return a collection of hashes that can be used to prove some data is in the tree
 func (t *Tree) GetProof(ctx context.Context, leafIndex int) *Proof {
+	proof := Proof{Proofs: []ProofEntry{}}
 
-	return nil
+	var siblingIndex int
+	//var siblingPosition string
+
+	for i := t.Depth - 1; i > 0; i-- {
+		levelLen := len(t.Layers[i])
+		if (leafIndex == levelLen-1) && (levelLen%2 == 1) {
+			leafIndex = int(leafIndex / 2)
+			continue
+		}
+
+		if leafIndex%2 == 0 {
+			siblingIndex = leafIndex + 1
+			//siblingPosition = "right"
+		} else {
+			siblingIndex = leafIndex - 1
+			//siblingPosition = "left"
+		}
+
+		proof.Proofs = append(proof.Proofs, ProofEntry{
+			Layer:  i,
+			IsLeft: t.Layers[i][siblingIndex].IsLeft,
+			Hash:   t.Layers[i][siblingIndex].Hash,
+		})
+
+		leafIndex = int(leafIndex / 2)
+	}
+
+	return &proof
 }
 
-// // Verify data will indicate if data is present in the tree and also recalulate that the data
-// func (t *Tree) VerifyData(expectedRoot Hash, data []byte) bool {
-// 	expectedHash := CreateLeafHash(data)
-// 	for _, leaf := range t.Leaves {
-// 		// Found data in leaves
-// 		if bytes.Equal(expectedHash, leaf.Hash) {
+// VerifyProof will verify a passed proof
+func (t *Tree) VerifyProof(proof *Proof, root, indexHash Hash) bool {
+	proofHash := indexHash
 
-// 		}
+	for _, p := range proof.Proofs {
+		if p.IsLeft {
+			proofHash = CreateNodeHash(p.Hash, proofHash)
+		} else {
+			proofHash = CreateNodeHash(proofHash, p.Hash)
+		}
+	}
 
-// 	}
-// 	return false
-// }
+	return bytes.Equal(root, proofHash)
+}
 
 // ToString will create a string representation of the tree
 func (t *Tree) ToString(ctx context.Context) string {

@@ -63,12 +63,32 @@ func TestTree(t *testing.T) {
 				if tree == nil {
 					t.Error("Unable to create tree")
 				}
-				fmt.Printf("tree: %s\n", tree.ToString(tt.args.ctx))
+				//fmt.Printf("tree: %s\n", tree.ToString(tt.args.ctx))
 				if !bytes.Equal(tree.GetRootHash(), tt.want) {
 					t.Errorf("Incorrect hash = %v, want %v", tree.GetRootHash(), tt.want)
 				}
 
 			})
+		}
+
+	})
+
+	t.Run("Proof", func(t *testing.T) {
+		testData := getTestData(4)
+		tree := getTestTree(ctx, testHasher, testData)
+		if tree == nil {
+			t.Error("Unable to create tree")
+		}
+		fmt.Printf("tree:\n%s\n", tree.ToString(ctx))
+		// Get third part of the 4
+		part := testData[2]
+		proof := tree.GetProof(ctx, 2)
+		fmt.Printf("proof:\n%s\n", proof.ToString(ctx))
+		partHash := CreateLeafHash(part)
+
+		verified := tree.VerifyProof(proof, tree.GetRoot().Hash, partHash)
+		if !verified {
+			t.Error("Data not verified")
 		}
 
 	})
