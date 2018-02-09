@@ -57,6 +57,11 @@ func (t *Tree) Build(ctx context.Context) {
 		depth++
 	}
 
+	// Reverse layers so root is at index 0 0
+	for i, j := 0, len(layers)-1; i < j; i, j = i+1, j-1 {
+		layers[i], layers[j] = layers[j], layers[i]
+	}
+
 	// Set tree
 	t.Depth = depth
 	t.Root = layer[0]
@@ -113,36 +118,6 @@ func buildLayer(ctx context.Context, layer []*Node) []*Node {
 
 // 	}
 // 	return false
-// }
-
-// // BuildLayers will build the layers into a navigationable array
-// func (t *Tree) BuildLayers(ctx context.Context) [][]*Node {
-
-// 	layers := make([][]*Node, t.Depth+1)
-
-// 	for _, l := range t.Leaves {
-// 		layers[0] = t.Leaves
-// 		parent := l.Parent
-// 		layerDepth := 1
-// 		for parent != nil {
-// 			// Only add left parents
-// 			if parent.IsLeft {
-// 				layers[layerDepth] = append(layers[layerDepth], parent)
-// 			}
-// 			parent = parent.Parent
-// 			layerDepth++
-// 		}
-// 	}
-// 	// Add root to last layer
-// 	layers[t.Depth] = []*Node{t.Root}
-
-// 	fmt.Printf("Depth: %v\n", t.Depth)
-// 	fmt.Printf("Leaves: %v\n", len(t.Leaves))
-// 	for i := 0; i < t.Depth; i++ {
-// 		fmt.Printf("Depth: %v - %v\n", i, len(layers[i]))
-// 	}
-
-// 	return layers
 // }
 
 // ToString will create a string representation of the tree
