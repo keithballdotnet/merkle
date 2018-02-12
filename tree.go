@@ -127,29 +127,32 @@ func (t *Tree) GetProof(ctx context.Context, leafIndex int) *Proof {
 	proof := Proof{Proofs: []ProofEntry{}}
 
 	var siblingIndex int
-	//var siblingPosition string
+	layer := 0
 
+	// Go from the bottom of the tree up
 	for i := t.Depth - 1; i > 0; i-- {
+
+		// Only one item?
 		levelLen := len(t.Layers[i])
 		if (leafIndex == levelLen-1) && (levelLen%2 == 1) {
 			leafIndex = int(leafIndex / 2)
 			continue
 		}
 
+		// Where can I find the sibling?
 		if leafIndex%2 == 0 {
 			siblingIndex = leafIndex + 1
-			//siblingPosition = "right"
 		} else {
 			siblingIndex = leafIndex - 1
-			//siblingPosition = "left"
 		}
 
+		// Add the layer proof to the collection
 		proof.Proofs = append(proof.Proofs, ProofEntry{
-			Layer:  i,
+			Layer:  layer,
 			IsLeft: t.Layers[i][siblingIndex].IsLeft,
 			Hash:   t.Layers[i][siblingIndex].Hash,
 		})
-
+		layer++
 		leafIndex = int(leafIndex / 2)
 	}
 

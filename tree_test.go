@@ -74,23 +74,39 @@ func TestTree(t *testing.T) {
 	})
 
 	t.Run("Proof", func(t *testing.T) {
-		testData := getTestData(4)
-		tree := getTestTree(ctx, testHasher, testData)
-		if tree == nil {
-			t.Error("Unable to create tree")
+		type args struct {
+			ctx       context.Context
+			dataCount int
+			dataIndex int
 		}
-		fmt.Printf("tree:\n%s\n", tree.ToString(ctx))
-		// Get third part of the 4
-		part := testData[2]
-		proof := tree.GetProof(ctx, 2)
-		fmt.Printf("proof:\n%s\n", proof.ToString(ctx))
-		partHash := CreateLeafHash(part)
-
-		verified := tree.VerifyProof(proof, tree.GetRoot().Hash, partHash)
-		if !verified {
-			t.Error("Data not verified")
+		tests := []struct {
+			name string
+			args args
+			want bool
+		}{
+			{"4leaves", args{ctx, 4, 2}, true},
+			{"2leaves", args{ctx, 2, 1}, true},
+			{"8leaves", args{ctx, 8, 5}, true},
 		}
-
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				testData := getTestData(tt.args.dataCount)
+				tree := getTestTree(tt.args.ctx, testHasher, testData)
+				if tree == nil {
+					t.Error("Unable to create tree")
+				}
+				fmt.Printf("tree:\n%s\n", tree.ToString(tt.args.ctx))
+				// Get third part of the 4
+				data := testData[tt.args.dataIndex]
+				proof := tree.GetProof(ctx, tt.args.dataIndex)
+				fmt.Printf("proof:\n%s\n", proof.ToString(tt.args.ctx))
+				dataHash := CreateLeafHash(data)
+				verified := tree.VerifyProof(proof, tree.GetRoot().Hash, dataHash)
+				if verified != tt.want {
+					t.Errorf("Incorrect verification = %v, want %v", verified, tt.want)
+				}
+			})
+		}
 	})
 
 }
