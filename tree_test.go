@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
-	"fmt"
 	"testing"
 )
 
@@ -95,11 +94,11 @@ func TestTree(t *testing.T) {
 				if tree == nil {
 					t.Error("Unable to create tree")
 				}
-				fmt.Printf("tree:\n%s\n", tree.ToString(tt.args.ctx))
+				//fmt.Printf("tree:\n%s\n", tree.ToString(tt.args.ctx))
 				// Get third part of the 4
 				data := testData[tt.args.dataIndex]
 				proof := tree.GetProof(ctx, tt.args.dataIndex)
-				fmt.Printf("proof:\n%s\n", proof.ToString(tt.args.ctx))
+				//fmt.Printf("proof:\n%s\n", proof.ToString(tt.args.ctx))
 				dataHash := CreateLeafHash(data)
 				verified := tree.VerifyProof(proof, tree.GetRoot().Hash, dataHash)
 				if verified != tt.want {

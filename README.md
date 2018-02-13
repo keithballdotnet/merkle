@@ -9,10 +9,9 @@ A Merkle Tree playground
 
 This tree uses THEX (http://adc.sourceforge.net/draft-jchapweske-thex-02.html) as a basis.  Promoting odd nodes.  Also prepending bits depending on nodes being either nodes or leaves.
 
-## Further Reading
+## Merkle Tree Further Reading
 
 https://en.wikipedia.org/wiki/Merkle_tree
-
 
 http://adc.sourceforge.net/draft-jchapweske-thex-02.html
 
@@ -23,3 +22,9 @@ https://www.mycryptopedia.com/merkle-tree-merkle-root-explained/
 https://brilliant.org/wiki/merkle-tree/
 
 https://github.com/quux00/merkle-tree
+
+### Merkle Tree Use In Synchronization
+
+https://jack-vanlightly.com/blog/2016/10/24/exploring-the-use-of-hash-trees-for-data-synchronization-part-1
+
+http://distributeddatastore.blogspot.de/2013/07/cassandra-using-merkle-trees-to-detect.html
