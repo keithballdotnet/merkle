@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 )
 
@@ -104,8 +105,6 @@ func buildLayer(ctx context.Context, layer []*Node) []*Node {
 		}
 
 		// Set up the nodes relationships
-		newnode.Left = layer[i]
-		newnode.Right = layer[i+1]
 		layer[i].IsLeft = true
 		layer[i].Parent = &newnode
 		layer[i+1].Parent = &newnode
@@ -186,4 +185,20 @@ func (t *Tree) ToString(ctx context.Context) string {
 	}
 
 	return str
+}
+
+// Serialize will get a transport / storage version of the
+func (t *Tree) Serialize() ([]byte, error) {
+	return json.Marshal(t.Layers)
+}
+
+// DeSerialize will take serialized data and return a tree
+func DeSerialize(data []byte) (*Tree, error) {
+	var layers [][]*Node
+	err := json.Unmarshal(data, &layers)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Tree{Layers: layers, Depth: len(layers)}, nil
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"fmt"
 	"testing"
 )
 
@@ -66,7 +67,6 @@ func TestTree(t *testing.T) {
 				if !bytes.Equal(tree.GetRootHash(), tt.want) {
 					t.Errorf("Incorrect hash = %v, want %v", tree.GetRootHash(), tt.want)
 				}
-
 			})
 		}
 
@@ -106,6 +106,49 @@ func TestTree(t *testing.T) {
 				}
 			})
 		}
+	})
+	t.Run("Serialize", func(t *testing.T) {
+		five := getTestData(5)
+
+		type args struct {
+			ctx  context.Context
+			data [][]byte
+		}
+		tests := []struct {
+			name string
+			args args
+		}{
+			{"five", args{ctx, five}},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+
+				tree := getTestTree(tt.args.ctx, testHasher, tt.args.data)
+				if tree == nil {
+					t.Error("Unable to create tree")
+				}
+				//fmt.Printf("tree: %s\n", tree.ToString(tt.args.ctx))
+				data, err := tree.Serialize()
+				if err != nil {
+					t.Errorf("Error: %v", err)
+				}
+
+				newTree, err := DeSerialize(data)
+				if err != nil {
+					t.Errorf("Error: %v", err)
+				}
+				if newTree == nil {
+					t.Error("Returned nil tree")
+				}
+				fmt.Printf("newTree: %s\n", newTree.ToString(tt.args.ctx))
+
+				if tree.Depth != newTree.Depth {
+					t.Errorf("Incorrect depth = %v, want %v", newTree.Depth, tree.Depth)
+				}
+
+			})
+		}
+
 	})
 
 }

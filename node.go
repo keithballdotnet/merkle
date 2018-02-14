@@ -14,12 +14,5 @@ type Node struct {
 	Type   NodeType
 	Hash   Hash
 	IsLeft bool
-	Left   *Node
-	Right  *Node
 	Parent *Node
-}
-
-// IsLeaf returns true if this node is a leaf
-func (n *Node) IsLeaf() bool {
-	return n.Type == NodeTypeLeaf
 }
