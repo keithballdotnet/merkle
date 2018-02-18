@@ -15,4 +15,8 @@ type Node struct {
 	Hash   Hash
 	IsLeft bool
 	Parent *Node
+	// ExtraData is added to LeadNodes and can be an object
+	// or some kind of identifier for the caller, outside of
+	// the internal hash
+	ExtraData []byte
 }

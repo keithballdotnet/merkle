@@ -41,18 +41,25 @@ func (t *Tree) GetRootHash() Hash {
 }
 
 // AddContent will add data to the tree (replaces all leaves)
-func (t *Tree) AddContent(ctx context.Context, data [][]byte) {
-	// Now create leafs and add them to tree
-	var leaves []*Node
-	for _, d := range data {
-		leafHash := CreateLeafHash(d)
-		leaves = append(leaves, &Node{
-			Type: NodeTypeLeaf,
-			Hash: leafHash,
-		})
+func (t *Tree) AddContent(ctx context.Context, data [][]byte, extraData [][]byte) error {
+	if len(data) != len(extraData) {
+		return fmt.Errorf("data and extraDate length must match: data: %v extraData: %v", len(data), len(extraData))
 	}
+
+	// Now create leafs and add them to tree
+	leaves := make([]*Node, len(data))
+	for i := 0; i < len(data); i++ {
+		leafHash := CreateLeafHash(data[i])
+		leaves[i] = &Node{
+			Type:      NodeTypeLeaf,
+			Hash:      leafHash,
+			ExtraData: extraData[i],
+		}
+	}
+
 	t.Leaves = leaves
 	t.Layers = nil
+	return nil
 }
 
 // Build the merkle tree once we have added content

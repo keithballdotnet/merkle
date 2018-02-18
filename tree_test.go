@@ -159,7 +159,7 @@ func getTestTree(ctx context.Context, hasher Hasher, data [][]byte) *Tree {
 		return nil
 	}
 
-	tree.AddContent(ctx, data)
+	tree.AddContent(ctx, data, data)
 
 	tree.Build(ctx)
 
