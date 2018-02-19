@@ -28,3 +28,9 @@ https://github.com/quux00/merkle-tree
 https://jack-vanlightly.com/blog/2016/10/24/exploring-the-use-of-hash-trees-for-data-synchronization-part-1
 
 http://distributeddatastore.blogspot.de/2013/07/cassandra-using-merkle-trees-to-detect.html
+
+### Compare Merkle Trees
+
+https://stackoverflow.com/questions/5486304/explain-merkle-trees-for-use-in-eventual-consistency
+
+https://blog.sourced.tech/post/difftree/
